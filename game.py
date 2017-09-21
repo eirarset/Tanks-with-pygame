@@ -5,8 +5,8 @@ import pygame, sys
 from pygame.locals import *
 
 FPS = 30
-WINDOWHEIGHT = 480
-WINDOWWITH = 640
+WINDOWHEIGHT = 575
+WINDOWWITH = 1024
 TANKWITH = 40
 TANKHEIGHT = 40
 BOMBWITH = 15
@@ -57,8 +57,10 @@ def main():
     explosionimg = pygame.transform.scale(explosionfull, (EXPLOSIONWITH, EXPLOSIONHEIGHT))
     heartImg = pygame.image.load('heart.png')
     heart = pygame.transform.scale(heartImg, (HEARTHEIGHT, HEARTWITH))
+    blue_heart = pygame.transform.flip(heart, True, False)
     arrowImg = pygame.image.load('arrow.png')
     arrow = pygame.transform.scale(arrowImg, (ARROWLENGTH, ARROWWITH))
+    background = pygame.image.load('background.png')
 
 
     redX = 0
@@ -79,9 +81,9 @@ def main():
 
     while True:
 
-        SCREEN.fill(SKYBLUE)
-        pygame.draw.rect(SCREEN, BROWN_EARTH, (0, (WINDOWHEIGHT / 3) * 2, WINDOWWITH, WINDOWHEIGHT / 3))
-
+        #SCREEN.fill(SKYBLUE)
+        #pygame.draw.rect(SCREEN, BROWN_EARTH, (0, (WINDOWHEIGHT / 3) * 2, WINDOWWITH, WINDOWHEIGHT / 3))
+        SCREEN.blit(background, (0, 0))
 
 
         if redMoving:
@@ -140,6 +142,7 @@ def main():
                     bomb = True
                     if redTurn:
                         bombx = redX + 10
+
                     else:
                         bombx = blueX
                     bomby = WINDOWHEIGHT * (2 / 3) - TANKHEIGHT
@@ -149,24 +152,39 @@ def main():
                     stop = False
 
                     while True: #Set direction
-                        SCREEN.fill(SKYBLUE)
-                        pygame.draw.rect(SCREEN, BROWN_EARTH, (0, (WINDOWHEIGHT / 3) * 2, WINDOWWITH, WINDOWHEIGHT / 3))
-                        if rotate_up:
-                            if rotation >= 90:
-                                rotate_up = False
+                        SCREEN.blit(background, (0, 0))
+                        if redTurn:
+                            if rotate_up:
+                                if rotation >= 90:
+                                    rotate_up = False
+                                else:
+                                    rotation += 2
                             else:
-                                rotation += 2
+                                if rotation <= 0:
+                                    rotate_up = True
+                                else:
+                                    rotation -= 2
                         else:
-                            if rotation <= 0:
-                                rotate_up = True
+                            if rotate_up:
+                                if rotation <= -90:
+                                    rotate_up = False
+                                else:
+                                    rotation -= 2
                             else:
-                                rotation -= 2
+                                if rotation >= 0:
+                                    rotate_up = True
+                                else:
+                                    rotation += 2
                         SCREEN.blit(redtankImg, (redX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
                         SCREEN.blit(blueTankImg, (blueX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
 
+
                         new_arrow = pygame.transform.rotate(arrow, rotation)
                         new_rect = new_arrow.get_rect()
-                        new_rect.bottomleft = (bombx, bomby+30)
+                        if redTurn:
+                            new_rect.bottomleft = (bombx, bomby+30)
+                        else:
+                            new_rect.bottomright = (bombx, bomby+30)
                         SCREEN.blit(new_arrow, new_rect)
 
                         for ev in pygame.event.get():
@@ -176,20 +194,29 @@ def main():
                             elif ev.type == KEYDOWN:
                                 keys = pygame.key.get_pressed()
                                 if keys[K_SPACE]:
-                                    bomb_y_speed = 10 * rotation+1
-                                    bomb_x_speed = (90 / rotation) *2
+                                    bomb_y_speed = 15 * rotation+1
+                                    bomb_x_speed = (90 / rotation) *3
+                                    if not redTurn:
+                                        bomb_x_speed *= -1
                                     stop = True
+                        red_lives_show = red_lives
+                        red_lives_x = 10
+                        while red_lives_show > 0:
+                            red_lives_show -= 1
+                            SCREEN.blit(heart, (red_lives_x, 10))
+                            red_lives_x += HEARTWITH + 3
+                        blue_lives_show = blue_lives
+                        blue_lives_x = WINDOWWITH - HEARTWITH - 10
+                        while blue_lives_show > 0:
+                            blue_lives_show -= 1
+                            SCREEN.blit(blue_heart, (blue_lives_x, 10))
+                            blue_lives_x -= HEARTWITH + 3
                         pygame.display.update()
                         FPSCLOCK.tick(FPS)
                         if stop:
                             break
 
-
-
-
-
-
-
+                    arrow = pygame.transform.rotate(arrow, 180)
                     bombspeed = 18
                     if redTurn:
                         redTurn = False
@@ -208,9 +235,9 @@ def main():
                 SCREEN.blit(explosionimg, (explosionx-30, explosiony-30))
         if bomb:
             if bomby > WINDOWHEIGHT * (2 / 3) - 20:
-                if bombx > redX - 10 and bombx < redX + 10:
+                if bombx > redX - 30 and bombx < redX + 30:
                     red_lives -= 1
-                if bombx > blueX - 40 and bombx < blueX + 40:
+                if bombx > blueX - 30 and bombx < blueX + 30:
                     blue_lives -= 1
                 if blue_lives <= 0 or red_lives <= 0:
                     game_over()
@@ -240,7 +267,7 @@ def main():
         blue_lives_x = WINDOWWITH - HEARTWITH - 10
         while blue_lives_show > 0:
             blue_lives_show -= 1
-            SCREEN.blit(heart, (blue_lives_x, 10))
+            SCREEN.blit(blue_heart, (blue_lives_x, 10))
             blue_lives_x -= HEARTWITH + 3
 
 
@@ -267,10 +294,3 @@ def game_over():
 
 
 main()
-
-
-
-
-
-
-
