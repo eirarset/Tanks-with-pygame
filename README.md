@@ -1,9 +1,9 @@
 # Tanks-with-pygame
 
-### [About](https://github.com/eirarset/Tanks-with-pygame#about)
-### [Controls](https://github.com/eirarset/Tanks-with-pygame#controls)
-### [Screenshots](https://github.com/eirarset/Tanks-with-pygame#screensshots)
-### [Run game](https://github.com/eirarset/Tanks-with-pygame#run-game)
+### [About](https://github.com/eirarset/Tanks-with-pygame#about-1)
+### [Controls](https://github.com/eirarset/Tanks-with-pygame#controls-1)
+### [Screenshots](https://github.com/eirarset/Tanks-with-pygame#screensshots-1)
+### [Run game](https://github.com/eirarset/Tanks-with-pygame#run-game-1)
 
 ## About
 A simple 1v1 game in Python, using the Pygame library.
