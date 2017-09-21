@@ -2,7 +2,7 @@
 
 ### [About](https://github.com/eirarset/Tanks-with-pygame#about-1)
 ### [Controls](https://github.com/eirarset/Tanks-with-pygame#controls-1)
-### [Screenshots](https://github.com/eirarset/Tanks-with-pygame#screensshots-1)
+### [Screenshots](https://github.com/eirarset/Tanks-with-pygame#screenshots-1)
 ### [Run game](https://github.com/eirarset/Tanks-with-pygame#run-game-1)
 
 ## About
