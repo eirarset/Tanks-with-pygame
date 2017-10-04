@@ -1,10 +1,10 @@
-# Tanks
-# By Eirik Årseth
-
 import pygame, sys
 from pygame.locals import *
 
-FPS = 30
+# Tanks
+# By Eirik Aarseth
+
+FPS = 25
 WINDOWHEIGHT = 575
 WINDOWWITH = 1024
 TANKWITH = 40
@@ -40,12 +40,7 @@ def main():
     pygame.init()
     SCREEN = pygame.display.set_mode((WINDOWWITH, WINDOWHEIGHT), 0, 32)
     FPSCLOCK = pygame.time.Clock()
-    blue_lives  = 5
-    red_lives = 5
     pygame.display.set_caption("Tanks with pygame")
-
-
-
 
     redImg = pygame.image.load('tank10.png')
     redtankImg = pygame.transform.scale(redImg, (TANKWITH, TANKHEIGHT))
@@ -62,9 +57,10 @@ def main():
     arrow = pygame.transform.scale(arrowImg, (ARROWLENGTH, ARROWWITH))
     background = pygame.image.load('background.png')
 
-
-    redX = 0
-    redMoving = False
+    blue_lives  = 5
+    red_lives = 1
+    red_x = 0
+    red_moving = False
     blueX = WINDOWWITH-TANKWITH
     blueMoving = False
     bomb = False
@@ -81,21 +77,19 @@ def main():
 
     while True:
 
-        #SCREEN.fill(SKYBLUE)
-        #pygame.draw.rect(SCREEN, BROWN_EARTH, (0, (WINDOWHEIGHT / 3) * 2, WINDOWWITH, WINDOWHEIGHT / 3))
         SCREEN.blit(background, (0, 0))
 
 
-        if redMoving:
+        if red_moving:
             if direction == 'r':
-                redX+=10
-                if redX > blueX - TANKWITH:
-                    redX = blueX - TANKWITH
+                red_x+=10
+                if red_x > blueX - TANKWITH:
+                    red_x = blueX - TANKWITH
 
             elif direction == 'l':
-                redX-=10
-                if redX < 0:
-                    redX = 0
+                red_x-=10
+                if red_x < 0:
+                    red_x = 0
 
         elif blueMoving:
             if direction == 'r':
@@ -104,8 +98,8 @@ def main():
                     blueX = WINDOWWITH-TANKWITH
             elif direction == 'l':
                 blueX-=10
-                if blueX < redX + TANKWITH:
-                    blueX = redX + TANKWITH
+                if blueX < red_x + TANKWITH:
+                    blueX = red_x + TANKWITH
 
 
         for ev in pygame.event.get():
@@ -118,21 +112,21 @@ def main():
                 if keys[K_LEFT]:
                     if redTurn:
                         blueMoving = False
-                        redMoving = True
+                        red_moving = True
                         direction = 'l'
-                        redX -= 1
+                        red_x -= 1
                     else:
-                        redMoving = False
+                        red_moving = False
                         blueMoving = True
                         direction = 'l'
                 elif keys[K_RIGHT]:
                     if redTurn:
                         blueMoving = False
-                        redMoving = True
+                        red_moving = True
                         direction = 'r'
-                        redX += 1
+                        red_x += 1
                     else:
-                        redMoving = False
+                        red_moving = False
                         blueMoving = True
                         direction = 'r'
                         blueX += 1
@@ -141,7 +135,7 @@ def main():
                         continue
                     bomb = True
                     if redTurn:
-                        bombx = redX + 10
+                        bombx = red_x + 10
 
                     else:
                         bombx = blueX
@@ -175,7 +169,7 @@ def main():
                                     rotate_up = True
                                 else:
                                     rotation += 2
-                        SCREEN.blit(redtankImg, (redX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
+                        SCREEN.blit(redtankImg, (red_x, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
                         SCREEN.blit(blueTankImg, (blueX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
 
 
@@ -223,7 +217,7 @@ def main():
                     else:
                         redTurn = True
             else:
-                redMoving = False
+                red_moving = False
                 blueMoving = False
 
         if explosion:
@@ -235,7 +229,7 @@ def main():
                 SCREEN.blit(explosionimg, (explosionx-30, explosiony-30))
         if bomb:
             if bomby > WINDOWHEIGHT * (2 / 3) - 20:
-                if bombx > redX - 30 and bombx < redX + 30:
+                if bombx > red_x - 30 and bombx < red_x + 30:
                     red_lives -= 1
                 if bombx > blueX - 30 and bombx < blueX + 30:
                     blue_lives -= 1
@@ -272,7 +266,7 @@ def main():
 
 
 
-        SCREEN.blit(redtankImg, (redX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
+        SCREEN.blit(redtankImg, (red_x, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
         SCREEN.blit(blueTankImg, (blueX, WINDOWHEIGHT * (2 / 3) - TANKHEIGHT * (2 / 3)))
 
         pygame.display.update()
@@ -282,12 +276,21 @@ def main():
 def game_over():
     game_over_img = pygame.image.load('GameOver.png')
     game_over = pygame.transform.scale(game_over_img, (WINDOWWITH, int(WINDOWHEIGHT/2)))
+    restart_img = pygame.image.load('restartText.png')
+    restart_rect = restart_img.get_rect()
+    restart_rect.centerx = WINDOWWITH/2
+    restart_rect.centery = WINDOWHEIGHT/3*2 
     while True:
         for ev in pygame.event.get():
             if ev.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            if ev.type == KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if(keys[K_r]):
+                    main()
         SCREEN.blit(game_over, (0, 0))
+        SCREEN.blit(restart_img, restart_rect)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
